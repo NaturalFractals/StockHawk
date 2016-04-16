@@ -1,6 +1,9 @@
 package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.ContentProviderOperation;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
@@ -18,7 +21,7 @@ public class Utils {
 
   public static boolean showPercent = true;
 
-  public static ArrayList quoteJsonToContentVals(String JSON){
+  public static ArrayList quoteJsonToContentVals(String JSON, Context context){
     ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
     JSONObject jsonObject = null;
     JSONArray resultsArray = null;
@@ -31,7 +34,11 @@ public class Utils {
         if (count == 1){
           jsonObject = jsonObject.getJSONObject("results")
               .getJSONObject("quote");
-          batchOperations.add(buildBatchOperation(jsonObject));
+          if(jsonObject != null || !jsonObject.equals("")) {
+            batchOperations.add(buildBatchOperation(jsonObject));
+          } else {
+            sendMessage("error", context);
+          }
         } else{
           resultsArray = jsonObject.getJSONObject("results").getJSONArray("quote");
 
@@ -49,8 +56,14 @@ public class Utils {
     return batchOperations;
   }
 
+  public static void sendMessage(String error, Context context) {
+    Intent intent = new Intent("INVALID_STOCK_SYMBOL");
+    intent.putExtra("Invalid Stock Symbol", "MESSAGE");
+    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+  }
+
   public static String truncateBidPrice(String bidPrice){
-    bidPrice = String.format("%.2f", Float.parseFloat(bidPrice));
+     bidPrice = String.format("%.2f", Float.parseFloat(bidPrice));
     return bidPrice;
   }
 

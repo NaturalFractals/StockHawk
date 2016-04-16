@@ -1,6 +1,8 @@
 package com.sam_chordas.android.stockhawk.ui;
 
 import android.app.LoaderManager;
+import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -8,6 +10,9 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -155,11 +160,39 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     }
   }
 
+  @Override
+  protected void onPause() {
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    super.onPause();
+  }
 
   @Override
   public void onResume() {
     super.onResume();
     getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+  }
+
+  private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      Toast.makeText(context, "Got message", Toast.LENGTH_LONG).show();
+    }
+  };
+
+  public class StockMessageService extends Service {
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+      return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+      return super.onStartCommand(intent, flags, startId);
+    }
+
+
   }
 
   public void networkToast(){

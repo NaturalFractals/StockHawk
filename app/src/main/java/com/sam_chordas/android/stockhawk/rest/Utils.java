@@ -1,12 +1,18 @@
 package com.sam_chordas.android.stockhawk.rest;
 
+import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
+
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +21,7 @@ import org.json.JSONObject;
 /**
  * Created by sam_chordas on 10/8/15.
  */
-public class Utils {
+public class Utils{
 
   private static String LOG_TAG = Utils.class.getSimpleName();
 
@@ -34,6 +40,10 @@ public class Utils {
         if (count == 1){
           jsonObject = jsonObject.getJSONObject("results")
               .getJSONObject("quote");
+          if(jsonObject.isNull("Ask")) {
+            sendMessage("Error", context);
+            return batchOperations;
+          }
           if(jsonObject != null || !jsonObject.equals("")) {
             batchOperations.add(buildBatchOperation(jsonObject));
           } else {
@@ -58,7 +68,6 @@ public class Utils {
 
   public static void sendMessage(String error, Context context) {
     Intent intent = new Intent("INVALID_STOCK_SYMBOL");
-    intent.putExtra("Invalid Stock Symbol", "MESSAGE");
     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
   }
 

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -88,10 +89,12 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     mCursorAdapter = new QuoteCursorAdapter(this, null);
     recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
             new RecyclerViewItemClickListener.OnItemClickListener() {
-              @Override public void onItemClick(View v, int position) {
-                //TODO:
-                // do something on item click
-              }
+                @Override
+                public void onItemClick(View v, int position) {
+                    //TODO:
+                    Intent intent = new Intent(mContext, StockChartActivity.class);
+                    startActivity(intent);
+                }
             }));
     recyclerView.setAdapter(mCursorAdapter);
 
@@ -165,19 +168,20 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
     super.onPause();
   }
-
+private IntentFilter filter = new IntentFilter("INVALID_STOCK_SYMBOL");
   @Override
   public void onResume() {
     super.onResume();
     getLoaderManager().restartLoader(CURSOR_LOADER_ID, null, this);
+      LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, filter);
   }
 
-  private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      Toast.makeText(context, "Got message", Toast.LENGTH_LONG).show();
-    }
-  };
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "Invalid Stock", Toast.LENGTH_LONG).show();
+        }
+    };
 
   public class StockMessageService extends Service {
 

@@ -1,9 +1,16 @@
 package com.sam_chordas.android.stockhawk.ui;
 
-/**
- * This class represents the activity of displaying a graph of the stock over time
- * @author Jesse Cochran
- */
-public class StockChartActivity {
+import android.os.Bundle;
+import android.app.Activity;
+
+import com.sam_chordas.android.stockhawk.R;
+
+public class StockChartActivity extends Activity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_stock_chart);
+    }
 
 }

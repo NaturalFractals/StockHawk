@@ -9,14 +9,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.db.chart.model.ChartSet;
 import com.db.chart.model.LineSet;
-import com.db.chart.view.ChartView;
 import com.db.chart.view.LineChartView;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -30,6 +28,8 @@ public class StockChartActivityFragment extends Fragment implements LoaderManage
     private LineChartView mLineChartView;
     private Cursor mCursor;
     private LineSet mLineSet;
+    private static final int CURSOR_LOADER_ID = 0;;
+    private Bundle args = new Bundle();
 
     public StockChartActivityFragment() {
     }
@@ -41,21 +41,26 @@ public class StockChartActivityFragment extends Fragment implements LoaderManage
         mLineChartView = (LineChartView) view.findViewById(R.id.linechart);
         mLineSet = new LineSet();
         formatLineSet();
-        Bundle args = new Bundle();
         Intent intent = getActivity().getIntent();
-        args.putString(getResources().getString(R.string.symbol), intent.getStringExtra(getResources().getString(R.string.symbol)));
-        getLoaderManager().initLoader(0, args, this);
+        args.putString("symbol", intent.getStringExtra("symbol"));
+        getLoaderManager().initLoader(CURSOR_LOADER_ID, args, this);
         return view;
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(CURSOR_LOADER_ID, args, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         return new CursorLoader(
                 getActivity(),
                 QuoteProvider.Quotes.CONTENT_URI,
                 new String[] {QuoteColumns.BIDPRICE},
-                QuoteColumns.SYMBOL + " =?",
-                new String[]{args.getString(getResources().getString(R.string.symbol))},
+                QuoteColumns.SYMBOL + " = ?",
+                new String[]{args.getString("symbol")},
                 null
         );
     }
@@ -71,8 +76,10 @@ public class StockChartActivityFragment extends Fragment implements LoaderManage
 
     }
 
-
-
+    /**
+     * Uses cursor to add data points to the LineSet. The LineSet is then added to the line chart
+     * view and the line chart is displayed.
+     */
     private void createLineChart() {
         mCursor.moveToFirst();
         for(int i = 0; i < mCursor.getCount(); i++) {
@@ -86,6 +93,9 @@ public class StockChartActivityFragment extends Fragment implements LoaderManage
 
     }
 
+    /**
+     * Formats the layout, color, line, etc. of the line chart.
+     */
     private void formatLineSet() {
         mLineSet.setColor(Color.parseColor("#758cbb"))
                 .setFill(Color.parseColor("#461bba"))

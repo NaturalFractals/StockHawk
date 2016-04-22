@@ -1,5 +1,6 @@
 package com.sam_chordas.android.stockhawk.ui;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -94,7 +95,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     //TODO:
                     mCursor.moveToPosition(position);
                     Intent intent = new Intent(mContext, StockChartActivity.class);
-                    intent.putExtra(getResources().getString(R.string.symbol), mCursor.getString(mCursor.getColumnIndex(getResources().getString(R.string.symbol))));
+                    intent.putExtra("symbol", mCursor.getString(mCursor.getColumnIndex(getResources().getString(R.string.symbol))));
                     startActivity(intent);
                 }
             }));
@@ -170,7 +171,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
     super.onPause();
   }
-private IntentFilter filter = new IntentFilter("INVALID_STOCK_SYMBOL");
+
+  private IntentFilter filter = new IntentFilter("INVALID_STOCK_SYMBOL");
+
   @Override
   public void onResume() {
     super.onResume();
@@ -185,6 +188,7 @@ private IntentFilter filter = new IntentFilter("INVALID_STOCK_SYMBOL");
         }
     };
 
+  @SuppressLint("Registered")
   public class StockMessageService extends Service {
 
     @Nullable

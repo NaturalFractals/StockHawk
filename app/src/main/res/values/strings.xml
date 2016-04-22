@@ -12,7 +12,6 @@
   <string name="widget_title">Today\'s Market</string>
   <string name="network_toast">Uh-oh! This app requires an internet connection</string>
     <string name="title_activity_stock_chart">StockChartActivity</string>
-
     <!-- Error message for invalid stock-->
     <string name="stock_error_message">Invalid Stock Symbol</string>
     <!-- Error message for already existing stock-->
@@ -26,7 +25,7 @@
     <string name="init" translatable="false">init</string>
     <string name="one" translatable="false">1</string>
 
-
     <!-- Content Description for adding stock button-->
     <string name="content_desc_add_stock">Add Stock to List</string>
+
 </resources>

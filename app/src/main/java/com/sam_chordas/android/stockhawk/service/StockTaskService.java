@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
+import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
@@ -35,9 +36,6 @@ public class StockTaskService extends GcmTaskService{
   private StringBuilder mStoredSymbols = new StringBuilder();
   private boolean isUpdate;
   public static final String ACTION_DATA_UPDATE = "com.sam_chordas.android.stockhawk.ACTION_DATA_UPDATE";
-    private String startDate;
-    private String endDate;
-
   public StockTaskService(){}
 
   public StockTaskService(Context context){

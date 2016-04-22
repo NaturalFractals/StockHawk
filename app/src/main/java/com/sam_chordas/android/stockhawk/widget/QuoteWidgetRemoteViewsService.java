@@ -13,7 +13,7 @@ import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 
 /**
- *
+ * This class provides the remote views factory used to populate the remote collection view
  * @author Jesse Cochran
  */
 public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
@@ -39,7 +39,7 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
                         new String[]{QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
                         QuoteColumns.PERCENT_CHANGE, QuoteColumns.CHANGE, QuoteColumns.ISUP},
                         QuoteColumns.ISCURRENT + "= ?",
-                        new String[]{"1"},
+                        new String[]{getResources().getString(R.string.one)},
                         null);
 
                 Binder.restoreCallingIdentity(id);
@@ -60,30 +60,30 @@ public class QuoteWidgetRemoteViewsService extends RemoteViewsService{
 
             @Override
             public RemoteViews getViewAt(int position) {
+                //Check cursor is not null, position parameter is valid
                 if(position == AdapterView.INVALID_POSITION || cursor == null || !cursor.moveToPosition(position)) {
                     return  null;
                 }
-
+                //Get Values from cursor for each stock to display in widget
                 String stockSymbol = cursor.getString(cursor.getColumnIndex(QuoteColumns.SYMBOL));
-                String stockBidPrice = cursor.getString(cursor.getColumnIndex(QuoteColumns.BIDPRICE));
                 String stockPercentChange = cursor.getString(cursor.getColumnIndex(QuoteColumns.PERCENT_CHANGE));
 
-                RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_collection_item);
+
+                RemoteViews views = new RemoteViews(getPackageName(), R.layout.list_item_quote);
                 views.setTextViewText(R.id.stock_symbol, stockSymbol);
-                views.setTextViewText(R.id.bid_price, stockBidPrice);
                 views.setTextViewText(R.id.change, stockPercentChange);
 
-                Intent fillIntent = new Intent();
+                Intent intent = new Intent();
                 Uri uri = QuoteProvider.Quotes.withSymbol(stockSymbol);
-                fillIntent.setData(uri);
+                intent.setData(uri);
 
-                views.setOnClickFillInIntent(R.id.widget_list_item, fillIntent);
+                views.setOnClickFillInIntent(R.id.list_item_quote, intent);
                 return views;
             }
 
             @Override
             public RemoteViews getLoadingView() {
-                return new RemoteViews(getPackageName(), R.layout.widget_collection_item);
+                return new RemoteViews(getPackageName(), R.layout.widget_collection);
             }
 
             @Override

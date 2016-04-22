@@ -1,17 +1,13 @@
 package com.sam_chordas.android.stockhawk.rest;
 
-import android.app.IntentService;
-import android.content.BroadcastReceiver;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
-import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 
 import java.util.ArrayList;
 import org.json.JSONArray;

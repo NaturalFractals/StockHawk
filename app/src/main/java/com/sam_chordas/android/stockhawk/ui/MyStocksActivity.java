@@ -75,7 +75,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     mServiceIntent = new Intent(this, StockIntentService.class);
     if (savedInstanceState == null){
       // Run the initialize task service so that some stocks appear upon an empty database
-      mServiceIntent.putExtra("tag", "init");
+      mServiceIntent.putExtra(getResources().getString(R.string.tag), getResources().getString(R.string.init));
       if (isConnected){
         startService(mServiceIntent);
       } else{
@@ -92,7 +92,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                 @Override
                 public void onItemClick(View v, int position) {
                     //TODO:
+                    mCursor.moveToPosition(position);
                     Intent intent = new Intent(mContext, StockChartActivity.class);
+                    intent.putExtra(getResources().getString(R.string.symbol), mCursor.getString(mCursor.getColumnIndex(getResources().getString(R.string.symbol))));
                     startActivity(intent);
                 }
             }));
@@ -116,15 +118,15 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                       new String[] { input.toString() }, null);
                   if (c.getCount() != 0) {
                     Toast toast =
-                        Toast.makeText(MyStocksActivity.this, "This stock is already saved!",
+                        Toast.makeText(MyStocksActivity.this, R.string.stock_existing_message,
                             Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
                     toast.show();
                     return;
                   } else {
                     // Add the stock to DB
-                    mServiceIntent.putExtra("tag", "add");
-                    mServiceIntent.putExtra("symbol", input.toString());
+                    mServiceIntent.putExtra(getResources().getString(R.string.tag), getResources().getString(R.string.add));
+                    mServiceIntent.putExtra(getResources().getString(R.string.symbol), input.toString());
                     startService(mServiceIntent);
                   }
                 }
@@ -145,7 +147,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     if (isConnected){
       long period = 3600L;
       long flex = 10L;
-      String periodicTag = "periodic";
+      String periodicTag = getResources().getString(R.string.periodic_tag);
 
       // create a periodic task to pull stocks once every hour after the app has been opened. This
       // is so Widget data stays up to date.
@@ -179,7 +181,7 @@ private IntentFilter filter = new IntentFilter("INVALID_STOCK_SYMBOL");
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Invalid Stock", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.stock_error_message, Toast.LENGTH_LONG).show();
         }
     };
 
@@ -245,7 +247,7 @@ private IntentFilter filter = new IntentFilter("INVALID_STOCK_SYMBOL");
         new String[]{ QuoteColumns._ID, QuoteColumns.SYMBOL, QuoteColumns.BIDPRICE,
             QuoteColumns.PERCENT_CHANGE, QuoteColumns.CHANGE, QuoteColumns.ISUP},
         QuoteColumns.ISCURRENT + " = ?",
-        new String[]{"1"},
+        new String[]{getResources().getString(R.string.one)},
         null);
   }
 

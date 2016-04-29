@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.db.chart.model.LineSet;
+import com.db.chart.view.AxisController;
 import com.db.chart.view.LineChartView;
 import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
@@ -81,14 +82,23 @@ public class StockChartActivityFragment extends Fragment implements LoaderManage
      * view and the line chart is displayed.
      */
     private void createLineChart() {
+        float max = Integer.MIN_VALUE;
+        float min = Integer.MAX_VALUE;
         mCursor.moveToFirst();
         for(int i = 0; i < mCursor.getCount(); i++) {
             float bidPrice = Float.parseFloat(mCursor.getString(mCursor.getColumnIndex(QuoteColumns.BIDPRICE)));
-            mLineSet.addPoint("" + i, bidPrice);
+            mLineSet.addPoint("", bidPrice);
+            if(bidPrice < min) {
+                min = bidPrice;
+            }
+            if(bidPrice > max) {
+                max = bidPrice;
+            }
             mCursor.moveToNext();
         }
 
         mLineChartView.addData(mLineSet);
+        mLineChartView.setAxisBorderValues((int) min - 10, (int) max + 10);
         mLineChartView.show();
 
     }
@@ -98,17 +108,10 @@ public class StockChartActivityFragment extends Fragment implements LoaderManage
      */
     private void formatLineSet() {
         mLineSet.setColor(Color.parseColor("#758cbb"))
-                .setFill(Color.parseColor("#461bba"))
                 .setDotsColor(Color.parseColor("#623abc"))
                 .setThickness(4)
                 .setDashed(new float[]{10f, 10f})
                 .beginAt(0);
     }
-
-    private void setLineChartView() {
-
-    }
-
-
 
 }
